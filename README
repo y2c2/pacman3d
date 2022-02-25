@@ -1,0 +1,78 @@
+/* Pacman 3D -- a simple 3D game built with OpenGL
+   Copyright(C) 2012 y2c2 
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+   */
+*
+
+
+*******************
+*  INTRODUCTION   *
+*******************
+Pacman 3D is a simple demostrate game built with OpenGL.
+
+
+**********
+*  GOAL  *
+**********
+The goal is to control your pacman(the yellow ball on the screen center) to
+eat all the beans in the map.
+BUT you don't let your pacman to be eaten by other monsters walking in the
+map, or you will fail.
+
+
+*************
+*  CONTROL  *
+*************
+On Splash Window:
+ENTER -- Start a new game
+
+In the game:
+W -- Move Up
+S -- Move Down
+A -- Move Left
+D -- Move Right
+
+
+*************
+*  COMPILE  *
+*************
+1. Windows
+Install MinGW and Glut for MinGW and Open a Console Window such as Windows's
+built-in 'Command Prompt', MSYS or anything like this. Locate to the source 
+code directory and enter the following command:
+C:\Pacman3D>make
+
+3. GNU/Linux
+Install GNU Build Toolchain and Glut development package, open a terminal, 
+locate to the source code directory then enter the following command
+$ make
+
+
+****************
+*  COMPATIBLE  *
+****************
+This game uses standard OpenGL interface and works on both UNIX like Operating 
+Systems and Windows, it has been tested on the following platforms:
+ * GNU/Linux
+ * Windows XP
+
+
+****************
+*  BUG REPORT  *
+****************
+Please feel free to contact me via email if you have found any bug or 
+have any suggestion.
+Email: yang_yc2@outlook.com
+

@@ -1,0 +1,232 @@
+Pacman 3D
+
+历史：
+Pacman是很久以前街机上兴起的趣味动作游戏，中文翻译为“吃豆人”，该游戏的主角是一个只有球星脑袋的大嘴巴吃豆人，游戏的过程就是控制该主角在迷宫中移动并且把迷宫中掉落的豆子都吃光。但是，迷宫中也有几个怪物会袭击吃豆人，所以在要控制吃豆人不但要忙着吃豆还要躲开各种怪物。
+
+简介：
+Pacman 3D是经典的Pacman游戏的3D复刻版本，作为这次游戏开发课程的结课设计。
+
+角色：
+地形为蓝色的迷宫墙体作为限制吃豆人和怪物移动空间的地形障碍物，吃豆人的颜色为经典的黄色，几只怪物的颜色分别为红，青，粉，橙作为区别。
+
+操作：
+游戏中共有两种界面，封面展示和游戏画面。
+1：封面：展示会显示一个3D的吃豆人LOGO，以及下一步操作的提示，这时按ENTER键就可以进入并开一局新的游戏。
+2：游戏画面：在游戏画面中可以使用几种控制键操作吃豆人在迷宫中移动以吃掉散落在迷宫中的豆子以及躲开怪物的追逐。
+W -- 向上移动
+S -- 向下移动
+A -- 向左移动
+D -- 向右移动
+当吃豆人移动到有豆子的位置时会自动将豆子吃掉，不需要单独操作吃豆过程。
+当移动方向有地形障碍物例如墙体时，吃豆人将被阻挡而无法向前移动。
+
+胜负条件：
+
+胜利：当迷宫中的所有豆子都被吃完而同时没有被怪物袭击的时候将被判定为胜利。
+失败：当迷宫中的豆子还有没吃掉的豆子时被怪物袭击中，则被判定为失败。
+
+游戏开发：
+
+游戏使用OpenGL作为图像显示接口，为了实现快速的简单的OpenGL程序开发，我使用了GLUT，作为搭配OpenGL的开发配套库，这个库在Windows操作系统以及GNU/Linux操作系统上都有移植并且基本实现无缝跨平台。
+
+游戏使用窗口模式并在启动的时候自动将游戏窗口放置在屏幕的中央
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - WINDOW_WIDTH) / 2,  
+			(glutGet(GLUT_SCREEN_HEIGHT) - WINDOW_HEIGHT) / 2);  
+
+为了使得观察地形和物体更方便，使用了一定的仰角斜向观察地形
+	glViewport(0,0,width,height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective
+		( 54.0f,
+		  (GLfloat)width/(GLfloat)height,
+		  0.1f,	
+		  3000.0f
+		);
+
+为了使得地形中的所有模型呈现3D的立体感而使用了光照：
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLightR);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, specularLightR);
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPositionR);
+
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuseLightG);
+	glLightfv(GL_LIGHT2, GL_SPECULAR, specularLightG);
+	glLightfv(GL_LIGHT2, GL_POSITION, lightPositionG);
+
+	glLightfv(GL_LIGHT3, GL_DIFFUSE, diffuseLightB);
+	glLightfv(GL_LIGHT3, GL_SPECULAR, specularLightB);
+	glLightfv(GL_LIGHT3, GL_POSITION, lightPositionB);
+
+	glEnable(GL_LIGHT0); 
+	glEnable(GL_LIGHT1); 
+	glEnable(GL_LIGHT2); 
+	glEnable(GL_LIGHT3); 
+
+需要注意的是，并不是所有的模型打开光照后都会有立体效果，除了光线设置正确之外还需要对每个顶点的法线进行设置，因为法线是OpenGL计算光照强度的参数之一。
+以立方体为例，立方体是构成游戏中地形障碍物的墙体的基本元素，而要使立方体在打开光照后有立体感必须正确设置法线：
+	glBegin(GL_QUADS);
+	glNormal3f(0.0f,1.0f,0.0f);
+	glVertex3f(0.5f,0.5f,0.5f);
+	glVertex3f(0.5f,0.5f,-0.5f);
+	glVertex3f(-0.5f,0.5f,-0.5f);
+	glVertex3f(-0.5f,0.5f,0.5f);
+	glEnd();
+	glBegin(GL_QUADS);
+	glNormal3f(0.0f,-1.0f,0.0f);
+	glVertex3f(0.5f,-0.5f,0.5f);
+	glVertex3f(-0.5f,-0.5f,0.5f);
+	glVertex3f(-0.5f,-0.5f,-0.5f);
+	glVertex3f(0.5f,-0.5f,-0.5f);
+	glEnd();
+	glBegin(GL_QUADS);
+	glNormal3f(0.0f,0.0f,1.0f);
+	glVertex3f(0.5f,0.5f,0.5f);
+	glVertex3f(-0.5f,0.5f,0.5f);
+	glVertex3f(-0.5f,-0.5f,0.5f);
+	glVertex3f(0.5f,-0.5f,0.5f);
+	glEnd();
+	glBegin(GL_QUADS);
+	glNormal3f(0.0f,0.0f,-1.0f);
+	glVertex3f(0.5f,0.5f,-0.5f);
+	glVertex3f(0.5f,-0.5f,-0.5f);
+	glVertex3f(-0.5f,-0.5f,-0.5f);
+	glVertex3f(-0.5f,0.5f,-0.5f);
+	glEnd();
+	glBegin(GL_QUADS);
+	glNormal3f(-1.0f,0.0f,0.0f);
+	glVertex3f(-0.5f,0.5f,0.5f);
+	glVertex3f(-0.5f,0.5f,-0.5f);
+	glVertex3f(-0.5f,-0.5f,-0.5f);
+	glVertex3f(-0.5f,-0.5f,0.5f);
+	glEnd();
+	glBegin(GL_QUADS);    //右面
+	glNormal3f(1.0f,0.0f,0.0f);
+	glVertex3f(0.5f,0.5f,0.5f);
+	glVertex3f(0.5f,-0.5f,0.5f);
+	glVertex3f(0.5f,-0.5f,-0.5f);
+	glVertex3f(0.5f,0.5f,-0.5f);
+	glEnd();
+
+但是球体因为是系统自带的函数自动进行绘制和设置，直接使用即可不需要手动设置法线都会有立体效果。
+	glutSolidSphere(size, 16, 16); 
+
+游戏中使用的物体除了立方体就是球体，所以将这两个物体的绘制过程独立为两个函数：
+void draw_box(int x, int y, float r, float g, float b, int direction);
+void draw_shpere(int x, int y, float r, float g, float b, float size, float x_pace_fix, float y_pace_fix);
+其中x和y参数用来指定物体绘制的坐标，r,g,b参数用来指定绘制的物体的颜色，pace_fix用来根据当前移动的渐变过渡修正移动位置。
+
+根据游戏中各个角色，又独立出几个直接用于绘制角色和地形的函数，这几个函数通过调用以上的draw_box函数和draw_shpere函数实现其功能：
+绘制墙体：
+void draw_wall_block(int x, int y, int direction);
+绘制主角：
+void draw_main_character();
+绘制豆子：
+void draw_bean(int x, int y, int direction);
+绘制敌人：
+void draw_enemy(int main_character_x, int main_character_y, int x, int y, int id);
+
+需要说明的一点是，虽然主角和敌人都是球体只是颜色不同，似乎不需要单独独立为两个函数，而我之所以这样实现是为了方便。
+我实现的过程并没有使用移动观察点的方法，而是手动计算地形和各怪物与主角之间的相对位置实现“移动”。
+主角的绘制过程相对简单，因为主角在屏幕上的位置一直是正中间，而当主角移动的时候实际上是地形相对与主角移动，而怪物的移动又是相对与地形的，所以其中有几个计算的过程是手工完成的。`
+以绘制敌人（也就是迷宫中的怪物）为例：
+#define ENEMY_1 1 /* RED */
+#define ENEMY_2 2 /* CYAN */
+#define ENEMY_3 3 /* PINK */
+#define ENEMY_4 4 /* ORANGE */
+
+void draw_enemy(int main_character_x, int main_character_y, int x, int y, int id)
+{
+
+	float x_pace_fix = 0.0, y_pace_fix = 0.0;
+	float x_pace_fix_2 = 0.0, y_pace_fix_2 = 0.0;
+	/* relative position from main character */
+	switch (characters[0].direction)
+	{
+		case DIRECTION_UP:
+			y_pace_fix = 0 - (float)pace / PACE_SLICE_RATE + 1;
+			break;
+		case DIRECTION_DOWN:
+			y_pace_fix = +(float)pace / PACE_SLICE_RATE - 1;
+			break;
+		case DIRECTION_LEFT:
+			x_pace_fix = ((float)pace / PACE_SLICE_RATE) - 1;
+			break;
+		case DIRECTION_RIGHT:
+			x_pace_fix = 1 - ((float)pace / PACE_SLICE_RATE);
+			break;
+		default:
+			break;
+	}
+	/* relative position from enemy character */
+	switch (characters[id].direction)
+	{
+		case DIRECTION_UP:
+			y_pace_fix_2 = (float)pace / PACE_SLICE_RATE;
+			break;
+		case DIRECTION_DOWN:
+			y_pace_fix_2 = 1 - (float)pace / PACE_SLICE_RATE - 1;
+			break;
+		case DIRECTION_LEFT:
+			x_pace_fix_2 = 1 - ((float)pace / PACE_SLICE_RATE) - 1;
+			break;
+		case DIRECTION_RIGHT:
+			x_pace_fix_2 = ((float)pace / PACE_SLICE_RATE) + 1 - 1;
+			break;
+		default:
+			break;
+	}
+	switch (id)
+	{
+		case ENEMY_1:
+			draw_shpere(x - main_character_x, y - main_character_y, 1.0, 0.191, 0.0, 0.5, x_pace_fix + x_pace_fix_2, y_pace_fix + y_pace_fix_2);
+			break;
+		case ENEMY_2:
+			draw_shpere(x - main_character_x, y - main_character_y, 0.0, 1.0, 0.9, 0.5, x_pace_fix + x_pace_fix_2, y_pace_fix + y_pace_fix_2);
+			break;
+		case ENEMY_3:
+			draw_shpere(x - main_character_x, y - main_character_y, 1.0, 0.629, 0.8, 0.5, x_pace_fix + x_pace_fix_2, y_pace_fix + y_pace_fix_2);
+			break;
+		case ENEMY_4:
+			draw_shpere(x - main_character_x, y - main_character_y, 1.0, 0.8, 0.0, 0.5, x_pace_fix + x_pace_fix_2, y_pace_fix + y_pace_fix_2);
+			break;
+		default:
+			break;
+	}
+}
+可以看出实际上对于敌人的坐标有两个修正值，这两个修正值叠加在一起才是真正的偏移值。
+
+游戏状态：
+游戏实际上有4种状态：
+1：标题页状态
+2：运行状态
+3：胜利状态
+4：失败状态
+在标题页按下ENTER可以进入游戏的运行状态，而运行状态中根据吃完所有豆子与否可以进入胜利状态或因为被怪物袭击而进入失败状态。
+/* game state */
+#define GAME_STATE_TITLE 0
+#define GAME_STATE_RUNNING 1
+#define GAME_STATE_WIN 2
+#define GAME_STATE_LOSE 3
+int game_state = GAME_STATE_TITLE;
+
+图片显示：
+图片显示使用方法是手工解析24bit的BMP文件，根据BMP文件的结构读取出图像的长度和宽度参数，同时定位到图像数据的部分，读取图像数据并且用glDrawPixels函数显示在游戏画面上：
+int bmp_draw(struct bmp_image *bmp, int p_x, int p_y)
+{
+	glLoadIdentity();  
+	glWindowPos2i((glutGet(GLUT_WINDOW_WIDTH)- bmp->width) / 2, (glutGet(GLUT_WINDOW_HEIGHT) - bmp->height) / 2);
+	glDrawPixels(bmp->width, bmp->height, GL_BGR_EXT,GL_UNSIGNED_BYTE,bmp->pixels);
+	/*glFlush();*/
+	return 0;
+}
+
+心得：
+以前曾经上过图形学的课程，当初的课程内容更加偏向理论和计算以及底层的原理方面的内容，虽然很重要但是因为课时的原因没有对课上所学的内容进行更好的总结和实践。可以说，图形学的几大重要应用之一就是游戏开发，而这次选了游戏开发这门课正好就是对图形学这门课的理论内容在实践方面的恰当补充。
+以前听说OpenGL的性能不如DirectX，虽然很不相信简单明快可移植性好的OpenGL会不如臃肿的DirectX，但是因为自己实践方面的经验比较少，很难得出信服的结论。如今上了这门课，老师使用OpenGL作为基础进行授课，给了我一个实践和论证的好机会。经过我的测试。OpenGL在Windows系统上的性能的确很糟糕，如果游戏的主循环结构根据Idle函数的Callback频率和渐变计数甚至会拖慢游戏的运行过程；但是当使用GNU/Linux上的OpenGL实现时，游戏流畅运行。从这里可以看得出，实际上是微软自己的OpenGL实现性能低下，也许是因为将主要精力放在自己主打的DirectX方面而故意忽视Windows平台的OpenGL用户有关，显卡制造商也许并没有对DirectX进行偏心而很可能是操作系统影响的原因才造成两个图形接口之间差距那么大。
+因为这次时间比较紧张，没有进行更精密的设计，比如模型方面的设计，只是使用了球体对怪物和吃豆人模型进行代替，手段很粗略不过效果还行。游戏关卡的设计也因为自己不是专业的设计师没法突破原有游戏的框架进行更有创意的设计，而这方面的设计师该游戏创新的一个很重要的突破口。因为我坚持自己的作品不能只支持Windows，而至少要支持一个GNU/Linux操作系统，但是因为两者运行的机制很不一样，在音频方面我还没有找到一个更好的解决方案来使得两个平台拥有相近的编码和使用体验，所以音频这个模块干脆不做，留到以后再进行思考，本来找到的一个很好的背景音乐也没用到，很可惜。
+最后还是肯定一下这门课还是学到了一些东西，帮助我在图形学的应用方面踏出了重要的一步。
+
